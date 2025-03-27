@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as GameLogImport } from './routes/game-log'
+import { Route as GameLaunchLogImport } from './routes/game-launch-log'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
@@ -19,6 +20,12 @@ import { Route as IndexImport } from './routes/index'
 const GameLogRoute = GameLogImport.update({
   id: '/game-log',
   path: '/game-log',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GameLaunchLogRoute = GameLaunchLogImport.update({
+  id: '/game-launch-log',
+  path: '/game-launch-log',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/game-launch-log': {
+      id: '/game-launch-log'
+      path: '/game-launch-log'
+      fullPath: '/game-launch-log'
+      preLoaderRoute: typeof GameLaunchLogImport
+      parentRoute: typeof rootRoute
+    }
     '/game-log': {
       id: '/game-log'
       path: '/game-log'
@@ -53,36 +67,41 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/game-launch-log': typeof GameLaunchLogRoute
   '/game-log': typeof GameLogRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/game-launch-log': typeof GameLaunchLogRoute
   '/game-log': typeof GameLogRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/game-launch-log': typeof GameLaunchLogRoute
   '/game-log': typeof GameLogRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/game-log'
+  fullPaths: '/' | '/game-launch-log' | '/game-log'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/game-log'
-  id: '__root__' | '/' | '/game-log'
+  to: '/' | '/game-launch-log' | '/game-log'
+  id: '__root__' | '/' | '/game-launch-log' | '/game-log'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GameLaunchLogRoute: typeof GameLaunchLogRoute
   GameLogRoute: typeof GameLogRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GameLaunchLogRoute: GameLaunchLogRoute,
   GameLogRoute: GameLogRoute,
 }
 
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/game-launch-log",
         "/game-log"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/game-launch-log": {
+      "filePath": "game-launch-log.tsx"
     },
     "/game-log": {
       "filePath": "game-log.tsx"

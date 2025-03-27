@@ -1,12 +1,13 @@
-'use client';
+"use client";
+import { PaginateTab } from "@/components/table/paginate-tab";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -14,16 +15,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/drawer";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -31,25 +30,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Textarea } from '@/components/ui/textarea';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { provider, providerList } from '@/lib/provider';
-import { IQueryActions, IQueryParams, useQueryParams } from '@/lib/queryParams';
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { provider, providerList } from "@/lib/provider";
+import { IQueryActions, IQueryParams, useQueryParams } from "@/lib/queryParams";
 import {
   IconAlertCircleFilled,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
   IconCircleCheckFilled,
   IconCircleLetterXFilled,
-} from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import axios from 'axios';
-import Big from 'big.js';
-import { format } from 'date-fns';
+} from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import axios from "axios";
+import Big from "big.js";
+import { format } from "date-fns";
 
 type GameLog = {
   _id: string;
@@ -65,28 +60,16 @@ type GameLog = {
   updatedAt: string;
   statusCode: number;
   url: string;
-  raw_data: string;
   method: string;
   proxy_received_time: string;
   res_body: string;
 };
 
-//hasNextPage: true
-//hasPrevPage: false
-//limit: 10
-//nextPage: 2
-//offset: 0
-//page: 1
-//pagingCounter: 1
-//prevPage: null
-//totalDocs: 142
-//totalPages: 15
-
 function SpliceUntilDash(str: string) {
-  return str.split('-')[0];
+  return str.split("-")[0];
 }
 
-export const Route = createFileRoute('/game-log')({
+export const Route = createFileRoute("/game-log")({
   component: RouteComponent,
 });
 
@@ -108,7 +91,10 @@ function DataTable({ data }: { data: GameLog[] }) {
         <TableBody>
           {data.length ? (
             data.map((row) => {
-              const timeTaken = Big(row.proxy_end_time)
+              console.log(row);
+              const timeTaken = Big(
+                row.proxy_end_time === "" ? 0 : row.proxy_end_time,
+              )
                 .minus(row.proxy_start_time)
                 .div(100000000)
                 .round(4, Big.roundUp)
@@ -160,16 +146,18 @@ function DataTable({ data }: { data: GameLog[] }) {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="px-1.5">
-                      {timeTaken < 1 ? (
+                      {timeTaken < 1 && timeTaken > 0 ? (
                         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-                      ) : (
+                      ) : timeTaken < 0 ? (
                         <IconCircleLetterXFilled className="fill-red-500 dark:fill-red-400" />
+                      ) : (
+                        <IconCircleLetterXFilled className="fill-yellow-500 dark:fill-yello-400" />
                       )}
-                      {timeTaken}s
+                      {timeTaken < 0 ? 0 : timeTaken}s
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {format(row.proxy_received_time, 'yyyy-MM-dd:HH:mm:ss')}
+                    {format(row.proxy_received_time, "yyyy-MM-dd:HH:mm:ss")}
                   </TableCell>
                 </TableRow>
               );
@@ -187,24 +175,11 @@ function DataTable({ data }: { data: GameLog[] }) {
   );
 }
 
-type PaginateTabProps = {
-  hasNextPage: true;
-  hasPrevPage: false;
-  limit: 10;
-  nextPage: 2;
-  offset: 0;
-  page: 1;
-  pagingCounter: 1;
-  prevPage: null;
-  totalDocs: 142;
-  totalPages: 15;
-};
-
 function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
   const isMobile = useIsMobile();
   console.log(data);
   return (
-    <Drawer direction={isMobile ? 'bottom' : 'right'}>
+    <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button
           variant="link"
@@ -219,14 +194,14 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
           <DrawerDescription>Request ID</DrawerDescription>
         </DrawerHeader>
 
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm pb-4">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
               <AccordionTrigger>Provider Header</AccordionTrigger>
               <AccordionContent>
                 <Textarea
                   disabled
-                  value={JSON.stringify(data.headers, null, '\t')}
+                  value={JSON.stringify(data.headers, null, "\t")}
                 />
               </AccordionContent>
             </AccordionItem>
@@ -236,7 +211,7 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
                 <AccordionContent>
                   <Textarea
                     disabled
-                    value={JSON.stringify(JSON.parse(data.body), null, '\t')}
+                    value={JSON.stringify(JSON.parse(data.body), null, "\t")}
                   />
                 </AccordionContent>
               </AccordionItem>
@@ -250,14 +225,14 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
                     value={JSON.stringify(
                       JSON.parse(data.res_body),
                       null,
-                      '\t',
+                      "\t",
                     )}
                   />
                 </AccordionContent>
               </AccordionItem>
             ) : null}
 
-            {data.stack && data.stack !== '' ? (
+            {data.stack && data.stack !== "" ? (
               <AccordionItem value="item-4">
                 <AccordionTrigger>Stack Trace</AccordionTrigger>
                 <AccordionContent>
@@ -266,7 +241,7 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
               </AccordionItem>
             ) : null}
 
-            {data.error_body && data.error_body !== '' ? (
+            {data.error_body && data.error_body !== "" ? (
               <AccordionItem value="item-5">
                 <AccordionTrigger>Stack Trace</AccordionTrigger>
                 <AccordionContent>
@@ -281,102 +256,17 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
   );
 }
 
-function PaginateTab({
-  props,
-  queryAction,
-}: {
-  props: PaginateTabProps;
-  queryAction: IQueryActions;
-}) {
-  const { hasNextPage, hasPrevPage, page, totalPages, totalDocs, limit } =
-    props;
-  const { setPage, setLimit } = queryAction;
-  return (
-    <div className="flex items-center justify-between px-4 pt-2">
-      <div className="flex w-full items-center gap-8">
-        <div className="text-muted-foreground flex-1 text-sm lg:flex">
-          Total {totalDocs} rows
-        </div>
-        <div className="hidden items-center gap-2 lg:flex">
-          <Label htmlFor="rows-per-page" className="text-sm font-medium">
-            Rows per page
-          </Label>
-          <Select
-            value={limit.toString()}
-            onValueChange={(value) => {
-              setLimit(Number(value));
-            }}
-          >
-            <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-              <SelectValue placeholder={50} />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 30, 50, 70, 100].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex w-fit items-center justify-center text-sm font-medium">
-          Page {page}
-        </div>
-        <div className="ml-0 flex items-center gap-2 ">
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0 lg:flex"
-            onClick={() => setPage(1)}
-          >
-            <span className="sr-only">Go to first page</span>
-            <IconChevronsLeft />
-          </Button>
-          <Button
-            variant="outline"
-            className="size-8"
-            size="icon"
-            disabled={!hasPrevPage}
-            onClick={() => setPage(page - 1)}
-          >
-            <span className="sr-only">Go to previous page</span>
-            <IconChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            className="size-8"
-            size="icon"
-            onClick={() => setPage(page + 1)}
-            disabled={!hasNextPage}
-          >
-            <span className="sr-only">Go to next page</span>
-            <IconChevronRight />
-          </Button>
-          <Button
-            variant="outline"
-            className="size-8 lg:flex"
-            size="icon"
-            onClick={() => setPage(totalPages)}
-          >
-            <span className="sr-only">Go to last page</span>
-            <IconChevronsRight />
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function SearchBar({ queryAction }: { queryAction: IQueryActions }) {
   return (
     <div className="flex mb-2">
       <Select
-        value={''}
+        value={""}
         onValueChange={(value) => {
           queryAction.setFilter({ provider_code: value });
         }}
       >
         <SelectTrigger size="sm" className="w-50" id="rows-per-page">
-          <SelectValue placeholder={'Provider'} />
+          <SelectValue placeholder={"Provider"} />
         </SelectTrigger>
         <SelectContent side="top">
           {providerList.map((p) => (
@@ -395,7 +285,7 @@ const fetchUsers = async (props: IQueryParams) => {
     axios
       //.get('http://localhost:3003/api/log/game/index', {
       //.get('http://159.223.42.121:3003/api/log/game/index', {
-      .get('https://api.lucky88vip.one/api/log/game/index', {
+      .get("https://api.lucky88vip.one/api/log/game/index", {
         params: props,
       })
       .then((res) => res.data)
@@ -403,10 +293,12 @@ const fetchUsers = async (props: IQueryParams) => {
 };
 
 function RouteComponent() {
-  const { queryParams, queryParamsAction } = useQueryParams({});
+  const { queryParams, queryParamsAction } = useQueryParams({
+    defaultSorter: "-proxy_received_time",
+  });
   const { data } = useQuery({
     queryKey: [
-      'game-log',
+      "game-log",
       queryParams.page,
       queryParams.limit,
       queryParams.filter,
