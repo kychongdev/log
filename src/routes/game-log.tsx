@@ -280,7 +280,7 @@ function SearchBar({ queryAction }: { queryAction: IQueryActions }) {
   );
 }
 
-const fetchUsers = async (props: IQueryParams) => {
+const fetchData = async (props: IQueryParams) => {
   return (
     axios
       //.get('http://localhost:3003/api/log/game/index', {
@@ -295,6 +295,7 @@ const fetchUsers = async (props: IQueryParams) => {
 function RouteComponent() {
   const { queryParams, queryParamsAction } = useQueryParams({
     defaultSorter: "-proxy_received_time",
+    defaultLimit: 50,
   });
   const { data } = useQuery({
     queryKey: [
@@ -304,7 +305,7 @@ function RouteComponent() {
       queryParams.filter,
       queryParams.sorter,
     ],
-    queryFn: () => fetchUsers(queryParams),
+    queryFn: () => fetchData(queryParams),
   });
 
   return (
