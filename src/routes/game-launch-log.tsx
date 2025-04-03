@@ -86,7 +86,7 @@ const fetchData = async (props: IQueryParams) => {
   return (
     axios
       //.get("http://localhost:3003/api/log/game-launch/index", {
-      //.get('http://159.223.42.121:3003/api/log/game-launch/index', {
+      //.get("http://159.223.42.121:3003/api/log/game-launch/index", {
       .get("https://api.lucky88vip.one/api/log/game-launch/index", {
         params: props,
       })

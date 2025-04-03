@@ -1,4 +1,5 @@
 "use client";
+import { urlAtom } from "@/components/app-sidebar";
 import { PaginateTab } from "@/components/table/paginate-tab";
 import {
   Accordion,
@@ -45,6 +46,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import Big from "big.js";
 import { format } from "date-fns";
+import { useAtom } from "jotai";
 
 type GameLog = {
   _id: string;
@@ -280,12 +282,12 @@ function SearchBar({ queryAction }: { queryAction: IQueryActions }) {
   );
 }
 
-const fetchData = async (props: IQueryParams) => {
+const fetchData = async (props: IQueryParams, url: string) => {
   return (
     axios
-      //.get('http://localhost:3003/api/log/game/index', {
-      //.get('http://159.223.42.121:3003/api/log/game/index', {
-      .get("https://api.lucky88vip.one/api/log/game/index", {
+      //.get("http://localhost:3003/api/log/game/index", {
+      //.get("http://159.223.42.121:3003/api/log/game/index", {
+      .get(url + "/api/log/game/index", {
         params: props,
       })
       .then((res) => res.data)
@@ -297,6 +299,7 @@ function RouteComponent() {
     defaultSorter: "-proxy_received_time",
     defaultLimit: 50,
   });
+  const [url] = useAtom(urlAtom);
   const { data } = useQuery({
     queryKey: [
       "game-log",
@@ -305,7 +308,7 @@ function RouteComponent() {
       queryParams.filter,
       queryParams.sorter,
     ],
-    queryFn: () => fetchData(queryParams),
+    queryFn: () => fetchData(queryParams, url),
   });
 
   return (

@@ -30,6 +30,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+
+// jotai useAtom with local storage
+export const urlAtom = atomWithStorage("url", "https://api.lucky88vip.one/");
 
 const data = {
   user: {
@@ -58,11 +65,11 @@ const data = {
       url: "#",
       icon: IconChartBar,
     },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
+    //{
+    //  title: "Team",
+    //  url: "#",
+    //  icon: IconUsers,
+    //},
   ],
   navClouds: [
     {
@@ -149,6 +156,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [url, setUrl] = useAtom(urlAtom);
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -170,11 +178,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {
+          //  <NavDocuments items={data.documents} />
+          //<NavSecondary items={data.navSecondary} className="mt-auto" />
+        }
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <Label>URL</Label>
+        <Input
+          value={url}
+          onChange={(e) => {
+            setUrl(e.target.value);
+          }}
+        />
+
+        {
+          //<NavUser user={data.user} />
+        }
       </SidebarFooter>
     </Sidebar>
   );
