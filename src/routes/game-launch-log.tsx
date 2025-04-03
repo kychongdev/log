@@ -1,3 +1,4 @@
+import { urlAtom } from "@/components/app-sidebar";
 import { PaginateTab } from "@/components/table/paginate-tab";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import { format } from "date-fns";
+import { useAtom } from "jotai";
 
 type GameLaunchLog = {
   _id: string;
@@ -82,12 +84,12 @@ function DataTable({ data }: { data: GameLaunchLog[] }) {
   );
 }
 
-const fetchData = async (props: IQueryParams) => {
+const fetchData = async (props: IQueryParams, url: string) => {
   return (
     axios
       //.get("http://localhost:3003/api/log/game-launch/index", {
       //.get("http://159.223.42.121:3003/api/log/game-launch/index", {
-      .get("https://api.lucky88vip.one/api/log/game-launch/index", {
+      .get(url + "/api/log/game-launch/index", {
         params: props,
       })
       .then((res) => res.data)
@@ -98,6 +100,7 @@ function RouteComponent() {
     defaultSorter: "-createdAt",
     defaultLimit: 50,
   });
+  const [url] = useAtom(urlAtom);
   const { data } = useQuery({
     queryKey: [
       "game-log",
@@ -105,8 +108,9 @@ function RouteComponent() {
       queryParams.limit,
       queryParams.filter,
       queryParams.sorter,
+      url,
     ],
-    queryFn: () => fetchData(queryParams),
+    queryFn: () => fetchData(queryParams, url),
   });
   return (
     <div>

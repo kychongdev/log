@@ -34,6 +34,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import { Button } from "./ui/button";
 
 // jotai useAtom with local storage
 export const urlAtom = atomWithStorage("url", "https://api.lucky88vip.one/");
@@ -184,13 +185,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
       </SidebarContent>
       <SidebarFooter>
-        <Label>URL</Label>
-        <Input
-          value={url}
-          onChange={(e) => {
-            setUrl(e.target.value);
-          }}
-        />
+        <div className="flex gap-1">
+          <Button
+            className="p-2"
+            onClick={() => {
+              setUrl("https://api.i9myr.com");
+            }}
+          >
+            Production
+          </Button>
+          <Button
+            className="p-2"
+            onClick={() => {
+              setUrl("https://api.lucky88vip.one");
+            }}
+          >
+            Staging
+          </Button>
+          <Button
+            className="p-2"
+            onClick={() => {
+              setUrl("http://localhost:3003");
+            }}
+          >
+            Local
+          </Button>
+        </div>
+        <div>
+          <Label>URL</Label>
+          <Input
+            value={url}
+            onChange={(e) => {
+              setUrl(e.target.value);
+            }}
+          />
+        </div>
 
         {
           //<NavUser user={data.user} />

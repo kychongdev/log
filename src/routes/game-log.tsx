@@ -307,6 +307,7 @@ function RouteComponent() {
       queryParams.limit,
       queryParams.filter,
       queryParams.sorter,
+      url,
     ],
     queryFn: () => fetchData(queryParams, url),
   });
