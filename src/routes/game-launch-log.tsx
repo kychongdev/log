@@ -1,6 +1,21 @@
 import { urlAtom } from "@/components/app-sidebar";
 import { PaginateTab } from "@/components/table/paginate-tab";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import {
   Table,
   TableBody,
@@ -9,6 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { provider } from "@/lib/provider";
 import { IQueryParams, useQueryParams } from "@/lib/queryParams";
 import { useQuery } from "@tanstack/react-query";
@@ -19,22 +36,22 @@ import { useAtom } from "jotai";
 
 type GameLaunchLog = {
   _id: string;
-  body: string;
-  createdAt: string;
   url: string;
   payload: string;
-  id: string;
-  provider_code: string;
-  res_data: string;
+  game: string;
+  body: string;
   res_headers: string;
-  res_message: string;
-  res_request: string;
+  res_data: string;
   res_status: string;
   res_status_text: string;
-  updatedAt: string;
-  game: string;
+  res_request: string;
+  res_message: string;
+  provider_code: string;
   player_id: string;
   game_id: string;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 };
 
 export const Route = createFileRoute("/game-launch-log")({
@@ -58,7 +75,9 @@ function DataTable({ data }: { data: GameLaunchLog[] }) {
           {data.length ? (
             data.map((row) => (
               <TableRow>
-                <TableCell>{row._id}</TableCell>
+                <TableCell>
+                  <TableCellViewer item={row._id} data={row} />
+                </TableCell>
                 <TableCell>
                   <Badge variant="outline" className="px-1.5">
                     {provider(row.provider_code)}
@@ -84,16 +103,139 @@ function DataTable({ data }: { data: GameLaunchLog[] }) {
   );
 }
 
-const fetchData = async (props: IQueryParams, url: string) => {
+function TableCellViewer({
+  item,
+  data,
+}: {
+  item: string;
+  data: GameLaunchLog;
+}) {
+  const isMobile = useIsMobile();
+
+  //game: string;
+  //body: string;
+  //res_headers: string;
+  //res_data: string;
+  //res_status: string;
+  //res_status_text: string;
+  //res_request: string;
+  //res_message: string;
   return (
-    axios
-      //.get("http://localhost:3003/api/log/game-launch/index", {
-      //.get("http://159.223.42.121:3003/api/log/game-launch/index", {
-      .get(url + "/api/log/game-launch/index", {
-        params: props,
-      })
-      .then((res) => res.data)
+    <Drawer direction={isMobile ? "bottom" : "right"}>
+      <DrawerTrigger asChild>
+        <Button
+          variant="link"
+          className="text-foreground w-fit px-0 text-left underline"
+        >
+          {item}
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader className="gap-1">
+          <DrawerTitle>{item}</DrawerTitle>
+          <DrawerDescription>Request ID</DrawerDescription>
+        </DrawerHeader>
+        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm pb-4">
+          <Textarea disabled>{data.url}</Textarea>
+        </div>
+
+        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm pb-4">
+          <Accordion type="single" collapsible className="w-full">
+            {data.payload && data.payload !== "" ? (
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Player Payload</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(JSON.parse(data.payload), null, "\t")}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Response Header</AccordionTrigger>
+              <AccordionContent>
+                <Textarea
+                  disabled
+                  value={JSON.stringify(
+                    JSON.parse(data.res_headers),
+                    null,
+                    "\t",
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
+            {data.body && data.body !== "" ? (
+              <AccordionItem value="item-3">
+                <AccordionTrigger>Our Request Body</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(JSON.parse(data.body), null, "\t")}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
+            {data.res_data && data.res_data !== "" ? (
+              <AccordionItem value="item-4">
+                <AccordionTrigger>Provider Response</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(
+                      JSON.parse(data.res_data),
+                      null,
+                      "\t",
+                    )}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
+
+            {data.res_request && data.res_request !== "" ? (
+              <AccordionItem value="item-4">
+                <AccordionTrigger>Stack Trace</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(
+                      JSON.parse(data.res_request),
+                      null,
+                      "\t",
+                    )}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
+
+            {data.res_message && data.res_message !== "" ? (
+              <AccordionItem value="item-5">
+                <AccordionTrigger>Stack Trace</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(
+                      JSON.parse(data.res_request),
+                      null,
+                      "\t",
+                    )}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
+          </Accordion>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
+}
+
+const fetchData = async (props: IQueryParams, url: string) => {
+  return axios
+    .get(url + "/api/log/game-launch/index", {
+      params: props,
+    })
+    .then((res) => res.data);
 };
 function RouteComponent() {
   const { queryParams, queryParamsAction } = useQueryParams({

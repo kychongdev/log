@@ -1,8 +1,8 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { AppSidebar } from '@/components/app-sidebar';
-import { SiteHeader } from '@/components/site-header';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+//import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export const Route = createRootRoute({
   component: () => (
@@ -20,7 +20,9 @@ export const Route = createRootRoute({
           </div>
         </SidebarInset>
       </SidebarProvider>
-      <TanStackRouterDevtools />
+      {
+        //<TanStackRouterDevtools />
+      }
     </>
   ),
 });

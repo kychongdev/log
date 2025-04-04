@@ -212,7 +212,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </Button>
         </div>
         <div>
-          <Label>URL</Label>
+          <Label className="mb-2">URL</Label>
           <Input
             value={url}
             onChange={(e) => {

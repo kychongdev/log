@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { provider, providerList } from "@/lib/provider";
 import { IQueryActions, IQueryParams, useQueryParams } from "@/lib/queryParams";
+import { SpliceUntilDash } from "@/lib/utils";
 import {
   IconAlertCircleFilled,
   IconCircleCheckFilled,
@@ -66,10 +67,6 @@ type GameLog = {
   proxy_received_time: string;
   res_body: string;
 };
-
-function SpliceUntilDash(str: string) {
-  return str.split("-")[0];
-}
 
 export const Route = createFileRoute("/game-log")({
   component: RouteComponent,
@@ -179,7 +176,6 @@ function DataTable({ data }: { data: GameLog[] }) {
 
 function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
   const isMobile = useIsMobile();
-  console.log(data);
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
@@ -203,7 +199,7 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
               <AccordionContent>
                 <Textarea
                   disabled
-                  value={JSON.stringify(data.headers, null, "\t")}
+                  value={JSON.stringify(JSON.parse(data.headers), null, "\t")}
                 />
               </AccordionContent>
             </AccordionItem>
