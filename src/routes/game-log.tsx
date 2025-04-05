@@ -1,5 +1,7 @@
 "use client";
 import { urlAtom } from "@/components/app-sidebar";
+import { DateTimePicker24h } from "@/components/datetime24h-picker";
+import { ProviderPicker } from "@/components/provider-picker";
 import { PaginateTab } from "@/components/table/paginate-tab";
 import {
   Accordion,
@@ -17,13 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -34,8 +30,8 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { provider, providerList } from "@/lib/provider";
-import { IQueryActions, IQueryParams, useQueryParams } from "@/lib/queryParams";
+import { provider } from "@/lib/provider";
+import { IQueryActions, IQueryParams, useQueryParams } from "@/lib/qs";
 import { SpliceUntilDash } from "@/lib/utils";
 import {
   IconAlertCircleFilled,
@@ -90,7 +86,6 @@ function DataTable({ data }: { data: GameLog[] }) {
         <TableBody>
           {data.length ? (
             data.map((row) => {
-              console.log(row);
               const timeTaken = Big(
                 row.proxy_end_time === "" ? 0 : row.proxy_end_time,
               )
@@ -254,35 +249,10 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
   );
 }
 
-function SearchBar({ queryAction }: { queryAction: IQueryActions }) {
-  return (
-    <div className="flex mb-2">
-      <Select
-        value={""}
-        onValueChange={(value) => {
-          queryAction.setFilter({ provider_code: value });
-        }}
-      >
-        <SelectTrigger size="sm" className="w-50" id="rows-per-page">
-          <SelectValue placeholder={"Provider"} />
-        </SelectTrigger>
-        <SelectContent side="top">
-          {providerList.map((p) => (
-            <SelectItem key={p.code} value={p.code}>
-              {p.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
 const fetchData = async (props: IQueryParams, url: string) => {
   return (
     axios
       //.get("http://localhost:3003/api/log/game/index", {
-      //.get("http://159.223.42.121:3003/api/log/game/index", {
       .get(url + "/api/log/game/index", {
         params: props,
       })
@@ -290,33 +260,76 @@ const fetchData = async (props: IQueryParams, url: string) => {
   );
 };
 
+function GameLogTable({
+  queryParams,
+  queryParamsAction,
+}: {
+  queryParams: IQueryParams;
+  queryParamsAction: IQueryActions;
+}) {
+  const [url] = useAtom(urlAtom);
+  const { data } = useQuery({
+    queryKey: ["game-log", queryParams, url],
+    queryFn: () => fetchData(queryParams, url),
+  });
+  return (
+    <>
+      {data && data.docs ? (
+        <>
+          <DataTable data={data.docs} />
+          <PaginateTab props={data} queryAction={queryParamsAction} />
+        </>
+      ) : null}
+    </>
+  );
+}
+
 function RouteComponent() {
   const { queryParams, queryParamsAction } = useQueryParams({
     defaultSorter: "-proxy_received_time",
     defaultLimit: 50,
   });
-  const [url] = useAtom(urlAtom);
-  const { data } = useQuery({
-    queryKey: [
-      "game-log",
-      queryParams.page,
-      queryParams.limit,
-      queryParams.filter,
-      queryParams.sorter,
-      url,
-    ],
-    queryFn: () => fetchData(queryParams, url),
-  });
+
+  function handleStartDateChange(date: Date) {
+    queryParamsAction.setFilter((prev) => ({
+      ...prev,
+      startDate: date,
+    }));
+  }
+
+  function handleEndDateChange(date: Date) {
+    queryParamsAction.setFilter((prev) => ({
+      ...prev,
+      endDate: date,
+    }));
+  }
 
   return (
-    <div>
-      {data && data.docs ? (
-        <>
-          <SearchBar queryAction={queryParamsAction} />
-          <DataTable data={data.docs} />
-          <PaginateTab props={data} queryAction={queryParamsAction} />
-        </>
-      ) : null}
-    </div>
+    <>
+      <div className="grid grid-cols-1 gap-2 mb-2 sm:grid-cols-2 ">
+        <div>
+          <Label className="mx-2 mb-1">Start Date</Label>
+          <DateTimePicker24h
+            value={queryParams.filter.startDate}
+            setValue={handleStartDateChange}
+          />
+        </div>
+        <div>
+          <Label className="mx-2 mb-1">End Date</Label>
+          <DateTimePicker24h
+            value={queryParams.filter.endDate}
+            setValue={handleEndDateChange}
+          />
+        </div>
+      </div>
+      <ProviderPicker
+        queryParams={queryParams}
+        queryAction={queryParamsAction}
+      />
+      <GameLogTable
+        queryParams={queryParams}
+        queryParamsAction={queryParamsAction}
+      />
+    </>
   );
 }

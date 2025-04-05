@@ -1,10 +1,14 @@
-'use client';
-import { Dispatch, SetStateAction, useState } from 'react';
+"use client";
+import { Dispatch, SetStateAction, useState } from "react";
+
+interface filterProps {
+  [x: string]: any;
+}
 
 interface IUseQueryParams {
   defaultPage?: number;
   defaultLimit?: number;
-  defaultFilter?: Object;
+  defaultFilter?: filterProps;
   defaultSorter?: string;
 }
 
@@ -16,7 +20,7 @@ export interface IUseQueryParamsResult {
 export interface IQueryParams {
   page: number;
   limit: number;
-  filter: Object;
+  filter: filterProps;
   sorter: string;
 }
 
@@ -24,14 +28,14 @@ export interface IQueryActions {
   setPage: Dispatch<SetStateAction<number>>;
   setLimit: Dispatch<SetStateAction<number>>;
   setSorter: Dispatch<SetStateAction<string>>;
-  setFilter: Dispatch<SetStateAction<Object>>;
+  setFilter: Dispatch<SetStateAction<filterProps>>;
 }
 
 export function useQueryParams({
   defaultPage = 1,
   defaultLimit = 10,
   defaultFilter = {},
-  defaultSorter = '',
+  defaultSorter = "",
 }: IUseQueryParams): IUseQueryParamsResult {
   const [page, setPage] = useState(defaultPage);
   const [limit, setLimit] = useState(defaultLimit);

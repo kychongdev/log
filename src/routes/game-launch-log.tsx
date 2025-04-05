@@ -1,4 +1,6 @@
 import { urlAtom } from "@/components/app-sidebar";
+import { DateTimePicker24h } from "@/components/datetime24h-picker";
+import { ProviderPicker } from "@/components/provider-picker";
 import { PaginateTab } from "@/components/table/paginate-tab";
 import {
   Accordion,
@@ -16,6 +18,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -27,12 +30,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { provider } from "@/lib/provider";
-import { IQueryParams, useQueryParams } from "@/lib/queryParams";
+import { IQueryActions, qsAtom } from "@/lib/qs";
+import { IQueryParams, useQueryParams } from "@/lib/qs";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import { format } from "date-fns";
 import { useAtom } from "jotai";
+import { useImmerAtom } from "jotai-immer";
 
 type GameLaunchLog = {
   _id: string;
@@ -237,21 +242,17 @@ const fetchData = async (props: IQueryParams, url: string) => {
     })
     .then((res) => res.data);
 };
-function RouteComponent() {
-  const { queryParams, queryParamsAction } = useQueryParams({
-    defaultSorter: "-createdAt",
-    defaultLimit: 50,
-  });
+
+function GameLaunchLog({
+  queryParams,
+  queryParamsAction,
+}: {
+  queryParams: IQueryParams;
+  queryParamsAction: IQueryActions;
+}) {
   const [url] = useAtom(urlAtom);
   const { data } = useQuery({
-    queryKey: [
-      "game-log",
-      queryParams.page,
-      queryParams.limit,
-      queryParams.filter,
-      queryParams.sorter,
-      url,
-    ],
+    queryKey: ["game-launch-log", queryParams, url],
     queryFn: () => fetchData(queryParams, url),
   });
   return (
@@ -263,5 +264,54 @@ function RouteComponent() {
         </>
       ) : null}
     </div>
+  );
+}
+
+function RouteComponent() {
+  const { queryParams, queryParamsAction } = useQueryParams({
+    defaultSorter: "-createdAt",
+    defaultLimit: 50,
+  });
+
+  function handleStartDateChange(date: Date) {
+    queryParamsAction.setFilter((prev) => ({
+      ...prev,
+      startDate: date,
+    }));
+  }
+
+  function handleEndDateChange(date: Date) {
+    queryParamsAction.setFilter((prev) => ({
+      ...prev,
+      endDate: date,
+    }));
+  }
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-2 mb-2 sm:grid-cols-2 ">
+        <div>
+          <Label className="mx-2 mb-1">Start Date</Label>
+          <DateTimePicker24h
+            value={queryParams.filter.startDate}
+            setValue={handleStartDateChange}
+          />
+        </div>
+        <div>
+          <Label className="mx-2 mb-1">End Date</Label>
+          <DateTimePicker24h
+            value={queryParams.filter.endDate}
+            setValue={handleEndDateChange}
+          />
+        </div>
+      </div>
+      <ProviderPicker
+        queryParams={queryParams}
+        queryAction={queryParamsAction}
+      />
+      <GameLaunchLog
+        queryParams={queryParams}
+        queryParamsAction={queryParamsAction}
+      />
+    </>
   );
 }

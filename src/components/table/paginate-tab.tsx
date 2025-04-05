@@ -1,4 +1,3 @@
-import { IQueryActions } from "@/lib/queryParams";
 import { Label } from "../ui/label";
 import {
   Select,
@@ -15,6 +14,7 @@ import {
   IconChevronsRight,
 } from "@tabler/icons-react";
 import { PaginateTabProps } from "@/types/PaginateProps";
+import { IQueryActions } from "@/lib/queryParams";
 
 export function PaginateTab({
   props,
