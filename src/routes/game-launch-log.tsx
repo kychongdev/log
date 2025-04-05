@@ -155,19 +155,22 @@ function TableCellViewer({
                 </AccordionContent>
               </AccordionItem>
             ) : null}
-            <AccordionItem value="item-2">
-              <AccordionTrigger>Response Header</AccordionTrigger>
-              <AccordionContent>
-                <Textarea
-                  disabled
-                  value={JSON.stringify(
-                    JSON.parse(data.res_headers),
-                    null,
-                    "\t",
-                  )}
-                />
-              </AccordionContent>
-            </AccordionItem>
+
+            {data.res_headers && data.res_headers !== "" ? (
+              <AccordionItem value="item-2">
+                <AccordionTrigger>Response Header</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(
+                      JSON.parse(data.res_headers),
+                      null,
+                      "\t",
+                    )}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
             {data.body && data.body !== "" ? (
               <AccordionItem value="item-3">
                 <AccordionTrigger>Our Request Body</AccordionTrigger>

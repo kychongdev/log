@@ -18,6 +18,8 @@ export function provider(provider_code: string) {
       return "Live22";
     case "dreamgaming":
       return "Dream Gaming";
+    case "fastspin":
+      return "FastSpin";
     default:
       return provider_code;
   }
@@ -33,4 +35,5 @@ export const providerList = [
   { code: "ap", name: "Advant Play" },
   { code: "live22", name: "Live22" },
   { code: "dreamgaming", name: "Dream Gaming" },
+  { code: "fastspin", name: "FastSpin" },
 ];

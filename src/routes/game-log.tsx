@@ -196,16 +196,18 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
 
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm pb-4">
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger>Provider Header</AccordionTrigger>
-              <AccordionContent>
-                <Textarea
-                  disabled
-                  value={JSON.stringify(JSON.parse(data.headers), null, "\t")}
-                />
-              </AccordionContent>
-            </AccordionItem>
-            {data.body ? (
+            {data.headers && data.headers !== "" ? (
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Provider Header</AccordionTrigger>
+                <AccordionContent>
+                  <Textarea
+                    disabled
+                    value={JSON.stringify(JSON.parse(data.headers), null, "\t")}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ) : null}
+            {data.body && data.body !== "" ? (
               <AccordionItem value="item-2">
                 <AccordionTrigger>Provider Body</AccordionTrigger>
                 <AccordionContent>
@@ -216,7 +218,7 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
                 </AccordionContent>
               </AccordionItem>
             ) : null}
-            {data.res_body ? (
+            {data.res_body && data.res_body !== "" ? (
               <AccordionItem value="item-3">
                 <AccordionTrigger>Response Body</AccordionTrigger>
                 <AccordionContent>
@@ -253,7 +255,9 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
           <Button onClick={() => mutate(item)}>Search for Bet History</Button>
           {bethistoryList
             ? bethistoryList.map((d: any) => {
-                return <Textarea value={JSON.stringify(d)} />;
+                return (
+                  <Textarea disabled value={JSON.stringify(d, null, "\t")} />
+                );
               })
             : null}
           {bethistoryList && bethistoryList.length === 0 ? (
