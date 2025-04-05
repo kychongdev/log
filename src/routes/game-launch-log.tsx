@@ -30,14 +30,12 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { provider } from "@/lib/provider";
-import { IQueryActions, qsAtom } from "@/lib/qs";
-import { IQueryParams, useQueryParams } from "@/lib/qs";
+import { IQueryActions, IQueryParams, useQp } from "@/lib/qs";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import { format } from "date-fns";
 import { useAtom } from "jotai";
-import { useImmerAtom } from "jotai-immer";
 
 type GameLaunchLog = {
   _id: string;
@@ -268,20 +266,20 @@ function GameLaunchLog({
 }
 
 function RouteComponent() {
-  const { queryParams, queryParamsAction } = useQueryParams({
+  const { qp, qpAction } = useQp({
     defaultSorter: "-createdAt",
     defaultLimit: 50,
   });
 
   function handleStartDateChange(date: Date) {
-    queryParamsAction.setFilter((prev) => ({
+    qpAction.setFilter((prev) => ({
       ...prev,
       startDate: date,
     }));
   }
 
   function handleEndDateChange(date: Date) {
-    queryParamsAction.setFilter((prev) => ({
+    qpAction.setFilter((prev) => ({
       ...prev,
       endDate: date,
     }));
@@ -292,26 +290,20 @@ function RouteComponent() {
         <div>
           <Label className="mx-2 mb-1">Start Date</Label>
           <DateTimePicker24h
-            value={queryParams.filter.startDate}
+            value={qp.filter.startDate}
             setValue={handleStartDateChange}
           />
         </div>
         <div>
           <Label className="mx-2 mb-1">End Date</Label>
           <DateTimePicker24h
-            value={queryParams.filter.endDate}
+            value={qp.filter.endDate}
             setValue={handleEndDateChange}
           />
         </div>
       </div>
-      <ProviderPicker
-        queryParams={queryParams}
-        queryAction={queryParamsAction}
-      />
-      <GameLaunchLog
-        queryParams={queryParams}
-        queryParamsAction={queryParamsAction}
-      />
+      <ProviderPicker queryParams={qp} queryAction={qpAction} />
+      <GameLaunchLog queryParams={qp} queryParamsAction={qpAction} />
     </>
   );
 }

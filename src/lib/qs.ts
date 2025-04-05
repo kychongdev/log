@@ -13,8 +13,8 @@ interface IUseQueryParams {
 }
 
 export interface IUseQueryParamsResult {
-  queryParams: IQueryParams;
-  queryParamsAction: IQueryActions;
+  qp: IQueryParams;
+  qpAction: IQueryActions;
 }
 
 export interface IQueryParams {
@@ -31,7 +31,7 @@ export interface IQueryActions {
   setFilter: Dispatch<SetStateAction<filterProps>>;
 }
 
-export function useQueryParams({
+export function useQp({
   defaultPage = 1,
   defaultLimit = 10,
   defaultFilter = {},
@@ -43,13 +43,13 @@ export function useQueryParams({
   const [filter, setFilter] = useState(defaultFilter);
 
   return {
-    queryParams: {
+    qp: {
       page,
       limit,
       filter,
       sorter,
     },
-    queryParamsAction: {
+    qpAction: {
       setPage,
       setLimit,
       setSorter,

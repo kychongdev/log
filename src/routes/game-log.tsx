@@ -31,7 +31,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { provider } from "@/lib/provider";
-import { IQueryActions, IQueryParams, useQueryParams } from "@/lib/qs";
+import { IQueryActions, IQueryParams, useQp } from "@/lib/qs";
 import { SpliceUntilDash } from "@/lib/utils";
 import {
   IconAlertCircleFilled,
@@ -285,20 +285,20 @@ function GameLogTable({
 }
 
 function RouteComponent() {
-  const { queryParams, queryParamsAction } = useQueryParams({
+  const { qp, qpAction } = useQp({
     defaultSorter: "-proxy_received_time",
     defaultLimit: 50,
   });
 
   function handleStartDateChange(date: Date) {
-    queryParamsAction.setFilter((prev) => ({
+    qpAction.setFilter((prev) => ({
       ...prev,
       startDate: date,
     }));
   }
 
   function handleEndDateChange(date: Date) {
-    queryParamsAction.setFilter((prev) => ({
+    qpAction.setFilter((prev) => ({
       ...prev,
       endDate: date,
     }));
@@ -310,26 +310,20 @@ function RouteComponent() {
         <div>
           <Label className="mx-2 mb-1">Start Date</Label>
           <DateTimePicker24h
-            value={queryParams.filter.startDate}
+            value={qp.filter.startDate}
             setValue={handleStartDateChange}
           />
         </div>
         <div>
           <Label className="mx-2 mb-1">End Date</Label>
           <DateTimePicker24h
-            value={queryParams.filter.endDate}
+            value={qp.filter.endDate}
             setValue={handleEndDateChange}
           />
         </div>
       </div>
-      <ProviderPicker
-        queryParams={queryParams}
-        queryAction={queryParamsAction}
-      />
-      <GameLogTable
-        queryParams={queryParams}
-        queryParamsAction={queryParamsAction}
-      />
+      <ProviderPicker queryParams={qp} queryAction={qpAction} />
+      <GameLogTable queryParams={qp} queryParamsAction={qpAction} />
     </>
   );
 }
