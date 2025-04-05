@@ -38,7 +38,7 @@ import {
   IconCircleCheckFilled,
   IconCircleLetterXFilled,
 } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import Big from "big.js";
@@ -171,6 +171,13 @@ function DataTable({ data }: { data: GameLog[] }) {
 
 function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
   const isMobile = useIsMobile();
+  const [url] = useAtom(urlAtom);
+  const { data: bethistoryList, mutate } = useMutation({
+    mutationFn: async (id: string) => {
+      return axios.get(url + `/api/log/bet/${id}`).then((res) => res.data);
+    },
+  });
+
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
@@ -243,6 +250,15 @@ function TableCellViewer({ item, data }: { item: string; data: GameLog }) {
               </AccordionItem>
             ) : null}
           </Accordion>
+          <Button onClick={() => mutate(item)}>Search for Bet History</Button>
+          {bethistoryList
+            ? bethistoryList.map((d: any) => {
+                return <Textarea value={JSON.stringify(d)} />;
+              })
+            : null}
+          {bethistoryList && bethistoryList.length === 0 ? (
+            <div>Not Found</div>
+          ) : null}
         </div>
       </DrawerContent>
     </Drawer>

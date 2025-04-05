@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
-import data from './data.json';
-import { ChartAreaInteractive } from '@/components/chart-area-interactive';
-import { DataTable } from '@/components/data-table';
-import { SectionCards } from '@/components/section-cards';
+import { createFileRoute } from "@tanstack/react-router";
+import data from "./data.json";
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import { DataTable } from "@/components/data-table";
+import { SectionCards } from "@/components/section-cards";
 //import { atomWithStorage } from 'jotai/utils';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: Index,
 });
 

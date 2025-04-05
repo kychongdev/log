@@ -14,7 +14,7 @@ import {
   IconChevronsRight,
 } from "@tabler/icons-react";
 import { PaginateTabProps } from "@/types/PaginateProps";
-import { IQueryActions } from "@/lib/queryParams";
+import { IQueryActions } from "@/lib/qs";
 
 export function PaginateTab({
   props,

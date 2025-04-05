@@ -24,10 +24,8 @@ export function DateTimePicker24h({
   }
 
   function handleTimeChange(type: "hour" | "minute", _value: string) {
-    console.log(_value);
     const currentDate = value || new Date();
     let newDate = new Date(currentDate);
-    console.log(newDate);
 
     if (type === "hour") {
       const hour = parseInt(_value, 10);
@@ -35,7 +33,6 @@ export function DateTimePicker24h({
     } else if (type === "minute") {
       newDate.setMinutes(parseInt(_value, 10));
     }
-    console.log(newDate);
     setValue(newDate);
   }
 
