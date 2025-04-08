@@ -91,7 +91,7 @@ function DataTable({ data }: { data: GameLog[] }) {
               )
                 .minus(row.proxy_start_time)
                 .div(1e9)
-                .round(4, Big.roundUp)
+                .round(5, Big.roundUp)
                 .toNumber();
               return (
                 <TableRow
