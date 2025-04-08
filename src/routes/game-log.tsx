@@ -90,7 +90,7 @@ function DataTable({ data }: { data: GameLog[] }) {
                 row.proxy_end_time === "" ? 0 : row.proxy_end_time,
               )
                 .minus(row.proxy_start_time)
-                .div(100000000)
+                .div(1e9)
                 .round(4, Big.roundUp)
                 .toNumber();
               return (
