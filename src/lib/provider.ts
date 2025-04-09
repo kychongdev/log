@@ -22,6 +22,12 @@ export function provider(provider_code: string) {
       return "FastSpin";
     case "bng":
       return "Bng";
+    case "bg":
+      return "Big Gaming";
+    case "sa":
+      return "SA Gaming";
+    case "ygr":
+      return "Ygr";
     default:
       return provider_code;
   }
@@ -39,4 +45,7 @@ export const providerList = [
   { code: "dreamgaming", name: "Dream Gaming" },
   { code: "fastspin", name: "FastSpin" },
   { code: "bng", name: "Bng" },
+  { code: "bg", name: "Big Gaming" },
+  { code: "sa", name: "SA Gaming" },
+  { code: "ygr", name: "Ygr" },
 ];
